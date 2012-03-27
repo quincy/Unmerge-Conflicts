@@ -65,7 +65,7 @@ while (my $line = <$MERGE>)
         if ($line =~ m{>>>>>>>\s+(\S+)}xms)
         {
             $rhs = 0;
-            $rhs_file = $merge_file . $1  unless $rhs_file;
+            $rhs_file = $merge_file . $1 . 'unmerged'  unless $rhs_file;
             next LINE;
         }
 
@@ -76,7 +76,7 @@ while (my $line = <$MERGE>)
         if ($line =~ m{<<<<<<<\s+(\S+)}xms)
         {
             $lhs = 1;
-            $lhs_file = $merge_file . $1  unless $lhs_file;
+            $lhs_file = $merge_file . $1 . 'unmerged'  unless $lhs_file;
             next LINE;
         }
         else
@@ -152,17 +152,17 @@ Given a file named sandwich.txt that looks like this:
 The result of unmerge.pl will be two new files called sandwich.txt.mine and
 sandwich.txt.r2 which look like this:
 
-    sandwich.txt.mine           sandwich.txt.r2
-    -----------------           ---------------
-    Top piece of bread          Top piece of bread
-    Mayonnaise                  Mayonnaise
-    Lettuce                     Lettuce
-    Tomato                      Tomato
-    Provolone                   Provolone
-    Salami                      Sauerkraut
-    Mortadella                  Grilled Chicken
-    Prosciutto                  Creole Mustard
-    Creole Mustard              Bottom piece of bread
+    sandwich.txt.mine.unmerged           sandwich.txt.r2.unmerged
+    --------------------------           ------------------------
+    Top piece of bread                   Top piece of bread
+    Mayonnaise                           Mayonnaise
+    Lettuce                              Lettuce
+    Tomato                               Tomato
+    Provolone                            Provolone
+    Salami                               Sauerkraut
+    Mortadella                           Grilled Chicken
+    Prosciutto                           Creole Mustard
+    Creole Mustard                       Bottom piece of bread
     Bottom piece of bread
 
 AUTHOR Quincy Bowers
