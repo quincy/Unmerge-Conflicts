@@ -13,14 +13,36 @@
 use strict;
 use warnings;
 
-my $merge_file = $ARGV[0];
-my $lhs        = 0;
-my $rhs        = 0;
-my $lhs_text   = q{};
-my $rhs_text   = q{};
-my $lhs_file   = q{};
-my $rhs_file   = q{};
+if (grep(/^-h|^--help/, @ARGV))
+{
+    usage();
+    exit 0;
+}
 
+if (! scalar @ARGV)
+{
+    print "You must specify a merge conflict file.\n\n";
+    usage();
+    exit 0;
+}
+
+my $merge_file = shift @ARGV;
+
+if (! -e $merge_file)
+{
+    print "$merge_file does not exist.\n\n";
+    usage();
+    exit 0;
+}
+
+my $lhs      = 0;
+my $rhs      = 0;
+my $lhs_text = q{};
+my $rhs_text = q{};
+my $lhs_file = q{};
+my $rhs_file = q{};
+
+# Open the merge file and write its contents to the lhs and rhs.
 open my $MERGE, '<', $merge_file
     or die "Couldn't open $merge_file for reading.  $!\n";
 
@@ -31,7 +53,6 @@ while (my $line = <$MERGE>)
     {
         if ($line =~ m{=======}xms)
         {
-            print "Saw ======= marker\n";
             $lhs = 0;
             $rhs = 1;
             next LINE;
@@ -43,7 +64,6 @@ while (my $line = <$MERGE>)
     {
         if ($line =~ m{>>>>>>>\s+(\S+)}xms)
         {
-            print "Saw >>>>>>> marker\n";
             $rhs = 0;
             $rhs_file = $merge_file . $1  unless $rhs_file;
             next LINE;
@@ -55,7 +75,6 @@ while (my $line = <$MERGE>)
     {
         if ($line =~ m{<<<<<<<\s+(\S+)}xms)
         {
-            print "Saw <<<<<<< marker\n";
             $lhs = 1;
             $lhs_file = $merge_file . $1  unless $lhs_file;
             next LINE;
@@ -91,6 +110,15 @@ close $RHS;
 print "Created $rhs_file\n";
 
 exit 0;
+
+#-------------------------------------------------------------------------------
+# Prints the help screen
+#-------------------------------------------------------------------------------
+sub usage
+{
+    while (<DATA>) { print; }
+}
+
 
 __END__
 Help Screen
